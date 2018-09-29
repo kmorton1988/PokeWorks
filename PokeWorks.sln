@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeWorks", "PokeWorks\PokeWorks.csproj", "{769E6B4C-A861-4DEF-B503-4568EC4F7D40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokeWorks", "PokeWorks\PokeWorks.csproj", "{769E6B4C-A861-4DEF-B503-4568EC4F7D40}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		LessCompiler = 769e6b4c-a861-4def-b503-4568ec4f7d40
 		SolutionGuid = {6E30D887-F892-45D3-863F-8B974490D03F}
 	EndGlobalSection
 EndGlobal

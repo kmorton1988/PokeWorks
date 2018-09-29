@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "wwwroot/js/Pokemon.es5.js",
+    "inputFile": "wwwroot/js/Pokemon.js"
+  },
+  {
+    "outputFile": "wwwroot/css/PokeCard.css",
+    "inputFile": "wwwroot/css/PokeCard.less"
+  }
+]

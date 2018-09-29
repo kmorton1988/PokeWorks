@@ -1,94 +1,140 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+  ViewData["Title"] = "Home Page";
+}
+@section Styles{
+  <style type="text/css">
+    #pokeContainer {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .select2-results {
+      min-height: 75vh;
+      max-height: 75vh;
+    }
+    .select2-results ul.select2-results__options[aria-expanded='true']{
+      max-height: 75vh;
+    }
+  </style>
+  <link href="~/css/PokeCard.css" rel="stylesheet" />
+}
+@section Scripts{
+  <script type="text/javascript" src="~/js/Pokemon.js"></script>
+  <script type="text/javascript">
+    var NationalDex = null;
+    var ActivePokemon = null;
+    $(document).ready(function () {
+      $.getJSON("/lib/PokeAPI/api/v2/pokedex/1/index.json", function (d) {
+        NationalDex = d;
+        var select2Items = new Array();
+        for (var len = NationalDex.pokemon_entries.length, n = 0; n < len; n++) {
+          var name = NationalDex.pokemon_entries[n].pokemon_species.name
+          select2Items.push({
+            id: NationalDex.pokemon_entries[n].entry_number,
+            text: "#" + NationalDex.pokemon_entries[n].entry_number.toString() + " " + name.substr(0, 1).toUpperCase() + name.substr(1)
+          });
+        }
+        $("#sel2Search").select2({
+          data: select2Items,
+          templateResult: function (item) {
+            var res = "";
+            if (item !== null) {
+              if ("id" in item) {
+                res = "<span><img src='/lib/PokeAPI/sprites/pokemon/" + item.id + ".png' class='img-flag' /> " + item.text + "</span>";
+              } else if ("text" in item) {
+                res = "<span>" + item.text + "</span>";
+              }
+            }
+            return $(res);
+          }
+        });
+        $("#sel2Search").on("change", function () {
+          $(".poke-loader").toggleClass("show", true);
+          var val = $("#sel2Search").val();
+
+          $("#activePokemon").pokeCard({
+            pokemon: val,
+            options: {
+              includes: {
+                species: {
+                  includes: {
+                    evolution_chain: {}
+                  }
+                }
+              },
+              callback: function () {
+                $(".poke-loader").toggleClass("show", false);
+                $("#activePokemon")[0].Draw();
+              }
+            }
+          });
+
+          //ActivePokemon = new Pokemon(val, {
+          //  includes: {
+          //    species: {
+          //      includes: {
+          //        evolution_chain: {}
+          //      }
+          //    }
+          //  },
+          //  callback: function () {
+          //    $(".poke-loader").toggleClass("show", false);
+
+          //    //var activeCard = this.UI.Create($("#pokeContainer")[0]);
+          //    //var nextPokemons = this.Get.Evolution.Next();
+          //    //$(activeCard).find(".poke-evolutions ul li").remove(); // Remove all possible evolutions
+          //    //$(activeCard).find(".poke-evolutions").hide();
+          //    //if (nextPokemons !== null && nextPokemons.length > 0) {
+          //    //  var tks = Object.getOwnPropertyNames(EvolveOptions);
+          //    //  for (var len = nextPokemons.length, n = 0; n < len; n++) {
+          //    //    if (nextPokemons[n].evolution_details.length > 0) {
+          //    //      var evolution = nextPokemons[n].evolution_details[0];
+          //    //      var li = document.createElement("li");
+          //    //      li.setAttribute("data-evolves-to", nextPokemons[n].species.name);
+          //    //      var arrTriggers = new Array();
+          //    //      for (var tlen = tks.length, t = 0; t < tlen; t++) {
+          //    //        var trigger = evolution[tks[t]];
+          //    //        if (trigger !== null && trigger !== false && trigger !== "") {
+          //    //          arrTriggers.push(EvolveOptions[tks[t]].label + " <strong>" + trigger.toString()) + "</strong>";
+          //    //        }
+          //    //      }
+          //    //      li.innerHTML = "<strong>" + nextPokemons[n].species.name.substr(0,1).toUpperCase() + nextPokemons[n].species.name.substr(1) + "</strong> by " + arrTriggers.join("<br/>&mdash; ");
+          //    //      $(activeCard).find(".poke-evolutions ul").append(li);//.append("<p name='" + tks[t] + "'>Evolves into " + nextPokemons[n].species.name + " by " + arrTriggers.join("<br/>&mdash; ") + "</p>");
+          //    //    }
+          //    //  }
+          //    //  $(activeCard).find(".poke-evolutions").show();
+          //    //}
+          //  }
+          //});
+        });
+      });
+    });
+  </script>
 }
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/banner1.svg" alt="ASP.NET" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how to build ASP.NET apps that can run anywhere.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner2.svg" alt="Visual Studio" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    There are powerful new features in Visual Studio for building modern web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner3.svg" alt="Microsoft Azure" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
+<template id="pokeCard">
+  <img class="sprite" src="{['sprites']['front_default']}" alt="Pokemon Image" />
+  <h1 title="Name">#<span aria-label="National Dex Number" name="{['id']}"></span>&nbsp;<span aria-label="Name" name="{['name']}"></span></h1>
+  <h4 title="Genus Name"><span aria-label="Genus Name" name="{['species']['genera'][2]['genus']}"></span></h4>
+  <div class="poke-evolutions">
+    <h6>Next Evolutionary Form(s)</h6>
+    <ul></ul>
+  </div>
+  <div class="poke-stats">
+    <canvas>This browser does not support HTML5 Canvas!</canvas>
+  </div>
+</template>
+<div class="panel panel-default">
+  <div class="panel-heading">National Pokedex</div>
+  <div class="panel-body">
+    <div>
+      <input type="text" id="sel2Search" class="form-control" />
     </div>
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
-
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core MVC</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
+    <a href="#divCompare" data-toggle="collapse" class="pull-right">compare</a>
+    <div id="divCompare">
+      <input type="text" id="sel2Compare" class="form-control" />
     </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398600">Add a Controller and View</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
+    <div id="pokeContainer">
+      <div id="activePokemon" class="poke-card"></div>
     </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
-        </ul>
-    </div>
+  </div>
 </div>
